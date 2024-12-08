@@ -7,10 +7,18 @@ OUTPUT="$1"
 
 mkdir -p "$OUTPUT"
 
-# Get coverage for all packages in the current directory.
+# Generate coverage for all Go modules
 if [ -z "$INPUT" ]; then
 	INPUT=$(mktemp)
-	go test ./... -coverpkg "$(go list || go list -m | head -1)/..." -coverprofile "$INPUT"
+	
+	# If INPUT_MODULES_DIR is set, use it as the search root
+	SEARCH_DIR="${INPUT_MODULES_DIR:-.}"
+	
+	# Find go.mod files and run tests in their directories
+	find "$SEARCH_DIR" -name go.mod -execdir bash -c '
+		COVER_PKG=$(go list || go list -m | head -1)
+		go test ./... -coverpkg "$COVER_PKG/..." -coverprofile "'$INPUT'" \;
+	'
 fi
 
 # Create an HTML report.
