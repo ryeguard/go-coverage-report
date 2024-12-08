@@ -5,6 +5,11 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 INPUT="${INPUT_COVERAGE-}"
 OUTPUT="$1"
 
+# Change to the specified modules directory
+if [ -n "${INPUT_MODULES_DIR-}" ]; then
+  cd "$INPUT_MODULES_DIR"
+fi
+
 mkdir -p "$OUTPUT"
 
 # Get coverage for all packages in the current directory.

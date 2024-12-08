@@ -26,6 +26,10 @@ inputs:
     default: false
   reuse-go:
     deprecationMessage: Go install is always reused.
+  modules-dir:
+    description: "Directory containing the Go module to generate coverage for"
+    required: false
+    default: "."
 
 runs:
   using: composite
@@ -34,7 +38,7 @@ runs:
       uses: actions/checkout@v4
       if: |
         hashFiles('.github') == '' &&
-        inputs.coverage-file == ''        
+        inputs.coverage-file == ''
 
     - name: Checkout wiki
       uses: actions/checkout@v4
@@ -50,6 +54,7 @@ runs:
         INPUT_CHART: ${{inputs.chart}}
         INPUT_BADGE_STYLE: ${{inputs.badge-style}}
         INPUT_BADGE_TITLE: ${{inputs.badge-title}}
+        INPUT_MODULES_DIR: ${{inputs.modules-dir}}
       run: |
         ${{github.action_path}}/coverage.sh ./.github/wiki/${{inputs.output-dir}}
 
